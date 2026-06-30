@@ -5,64 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Общий Свадебный Плейлист</title>
     <style>
-        body { 
-            font-family: sans-serif; 
-            background: #0e0e15; 
-            color: #fff; 
-            display: flex; 
-            justify-content: center; 
-            margin: 0;
-            padding: 15px; 
-            min-height: 100vh;
-        }
-        .container { 
-            width: 100%; 
-            max-width: 600px; 
-        }
+        body { font-family: sans-serif; background: #0e0e15; color: #fff; display: flex; justify-content: center; margin: 0; padding: 15px; min-height: 100vh; }
+        .container { width: 100%; max-width: 600px; }
         h2 { text-align: center; color: #ffcc00; margin-bottom: 20px; }
-        
-        .input-group { 
-            display: flex; 
-            flex-direction: row; /* На ПК в строку */
-            gap: 10px; 
-            margin-bottom: 20px; 
-        }
-
-        /* Адаптация под мобильные устройства (экран уже 480px) */
-        @media (max-width: 480px) {
-            .input-group { flex-direction: column; }
-            button { padding: 15px; } /* Увеличенная область нажатия для пальца */
-        }
-
-        input { 
-            flex-grow: 1; 
-            padding: 12px; 
-            border-radius: 10px; 
-            border: none; 
-            background: #1a1a27; 
-            color: white; 
-            font-size: 16px; /* Предотвращает зум на iOS при нажатии */
-        }
-        button { 
-            background: #ffcc00; 
-            color: #000; 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            cursor: pointer; 
-        }
-        .track-item { 
-            background: #1a1a27; 
-            padding: 10px; 
-            border-radius: 12px; 
-            margin-bottom: 10px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex-grow: 1; padding: 12px; border-radius: 10px; border: none; background: #1a1a27; color: white; font-size: 16px; }
+        button { background: #ffcc00; color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .track-item { background: #1a1a27; padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; }
         .del-btn { background: #ff4757; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         iframe { width: 100%; height: 80px; border-radius: 8px; }
+
+        /* Стили для кастомного модального окна */
+        #customModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; }
+        .modal-content { background:#1a1a27; padding:25px; border-radius:15px; text-align:center; max-width:80%; border: 1px solid #333; }
+        #modalInput { width: 90%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: none; background: #0e0e15; color: white; }
     </style>
 </head>
 <body>
@@ -74,6 +30,16 @@
         <button onclick="addTrack()">Добавить</button>
     </div>
     <div id="playlist"></div>
+</div>
+
+<!-- Модальное окно -->
+<div id="customModal">
+    <div class="modal-content">
+        <p id="modalText"></p>
+        <input type="password" id="modalInput" style="display:none;">
+        <br>
+        <button id="modalBtn">ОК</button>
+    </div>
 </div>
 
 <script type="module">
@@ -95,12 +61,30 @@
     const tracksRef = ref(db, 'tracks');
     const ADMIN_PASS = "Giga"; 
 
+    // Функция показа модального окна
+    window.showModal = function(text, isPrompt = false, callback = null) {
+        const modal = document.getElementById('customModal');
+        const modalText = document.getElementById('modalText');
+        const modalInput = document.getElementById('modalInput');
+        const modalBtn = document.getElementById('modalBtn');
+
+        modalText.innerText = text;
+        modal.style.display = 'flex';
+        modalInput.style.display = isPrompt ? 'block' : 'none';
+        
+        modalBtn.onclick = () => {
+            if (isPrompt) callback(modalInput.value);
+            modal.style.display = 'none';
+            modalInput.value = '';
+        };
+    };
+
     window.addTrack = function() {
         const input = document.getElementById('urlInput');
         const match = input.value.match(/album\/(\d+)\/track\/(\d+)/);
         
         if (!match) {
-            alert('Неверная ссылка');
+            showModal('Неверная ссылка');
             return;
         }
 
@@ -116,7 +100,7 @@
             }
 
             if (exists) {
-                alert('ТРЕК УЖЕ ДОБАВЛЕН ДРУГИМ ГОСТЕМ А ТЫ ЛОШАРА НЕ УСПЕЛ ИДИ ПОПЛАЧЬ МУХАХАХАХА!!! P.S ПРОСТИТЕ МЕНЯ НЕ БЕЙТЕ ТОЛЬКО :) Я ПОШУТИЛ ТАК Я НЕ ЗЛОЙ ЧЕЛОВЕК А ПРОСТО ДЭБИЛ');
+                showModal('ТРЕК УЖЕ ДОБАВЛЕН ДРУГИМ ГОСТЕМ! ИДИ ПОПЛАЧЬ ИЗА ЭТОГО :) P.s простите меня это создатель сайта вам сказал с шуткой а кто его создал большой большой секрет с уважением ваш Паша:)');
             } else {
                 push(tracksRef, { albumId: match[1], trackId: match[2] });
                 input.value = '';
@@ -125,12 +109,13 @@
     };
 
     window.removeTrack = function(key) {
-        const pass = prompt("Введите пароль администратора:");
-        if (pass === ADMIN_PASS) {
-            remove(ref(db, 'tracks/' + key));
-        } else {
-            alert("Неверный пароль!");
-        }
+        showModal("Введите пароль администратора:", true, (pass) => {
+            if (pass === ADMIN_PASS) {
+                remove(ref(db, 'tracks/' + key));
+            } else {
+                showModal("Неверный пароль!");
+            }
+        });
     };
 
     onValue(tracksRef, (snapshot) => {
