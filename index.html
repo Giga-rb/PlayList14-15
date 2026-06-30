@@ -10,7 +10,8 @@
         .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
         input { flex-grow: 1; padding: 12px; border-radius: 10px; border: none; background: #1a1a27; color: white; }
         button { background: #ffcc00; color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .track-item { background: #1a1a27; padding: 5px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; }
+        .track-item { background: #1a1a27; padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; }
+        .del-btn { background: #ff4757; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-top: 5px; }
         iframe { width: 100%; height: 80px; border-radius: 8px; }
     </style>
 </head>
@@ -27,7 +28,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDqXhc_dYigW3YN0SpYHCBELW_aj-_yvkE",
@@ -43,7 +44,9 @@
     const db = getDatabase(app);
     const tracksRef = ref(db, 'tracks');
 
-    // Функция добавления
+    // Твой секретный пароль
+    const ADMIN_PASS = "Giga"; 
+
     window.addTrack = function() {
         const input = document.getElementById('urlInput');
         const match = input.value.match(/album\/(\d+)\/track\/(\d+)/);
@@ -55,16 +58,25 @@
         }
     };
 
-    // Слушаем изменения в базе в реальном времени
+    window.removeTrack = function(key) {
+        const pass = prompt("Введите пароль администратора:");
+        if (pass === ADMIN_PASS) {
+            remove(ref(db, 'tracks/' + key));
+        } else {
+            alert("Неверный пароль!");
+        }
+    };
+
     onValue(tracksRef, (snapshot) => {
         const data = snapshot.val();
         const list = document.getElementById('playlist');
         list.innerHTML = '';
         if (data) {
-            Object.values(data).forEach(track => {
+            Object.entries(data).forEach(([key, track]) => {
                 list.innerHTML += `
                     <div class="track-item">
                         <iframe src="https://music.yandex.ru/iframe/#track/${track.trackId}/${track.albumId}" frameborder="0"></iframe>
+                        <button class="del-btn" onclick="removeTrack('${key}')">Удалить</button>
                     </div>
                 `;
             });
