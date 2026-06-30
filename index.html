@@ -44,18 +44,38 @@
     const db = getDatabase(app);
     const tracksRef = ref(db, 'tracks');
 
-    // Твой секретный пароль
-    const ADMIN_PASS = "Giga"; 
+    // Твой секретный пароль (замени на свой)
+    const ADMIN_PASS = "12345"; 
 
     window.addTrack = function() {
         const input = document.getElementById('urlInput');
         const match = input.value.match(/album\/(\d+)\/track\/(\d+)/);
-        if (match) {
-            push(tracksRef, { albumId: match[1], trackId: match[2] });
-            input.value = '';
-        } else {
+        
+        if (!match) {
             alert('Неверная ссылка');
+            return;
         }
+
+        const newTrackId = match[2];
+
+        // Проверка на дубликат
+        onValue(tracksRef, (snapshot) => {
+            const data = snapshot.val();
+            let exists = false;
+            
+            if (data) {
+                Object.values(data).forEach(track => {
+                    if (track.trackId === newTrackId) exists = true;
+                });
+            }
+
+            if (exists) {
+                alert('ТРЕК УЖЕ ДОБАВЛЕН ДРУГИМ ЧЕЛОВЕКОМ А ТЫ ЛОШАРА НЕ УСПЕЛ');
+            } else {
+                push(tracksRef, { albumId: match[1], trackId: match[2] });
+                input.value = '';
+            }
+        }, { onlyOnce: true });
     };
 
     window.removeTrack = function(key) {
