@@ -2,16 +2,66 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Общий Свадебный Плейлист</title>
     <style>
-        body { font-family: sans-serif; background: #0e0e15; color: #fff; display: flex; justify-content: center; padding: 20px; }
-        .container { width: 100%; max-width: 600px; }
+        body { 
+            font-family: sans-serif; 
+            background: #0e0e15; 
+            color: #fff; 
+            display: flex; 
+            justify-content: center; 
+            margin: 0;
+            padding: 15px; 
+            min-height: 100vh;
+        }
+        .container { 
+            width: 100%; 
+            max-width: 600px; 
+        }
         h2 { text-align: center; color: #ffcc00; margin-bottom: 20px; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        input { flex-grow: 1; padding: 12px; border-radius: 10px; border: none; background: #1a1a27; color: white; }
-        button { background: #ffcc00; color: #000; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .track-item { background: #1a1a27; padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; }
-        .del-btn { background: #ff4757; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+        
+        .input-group { 
+            display: flex; 
+            flex-direction: row; /* На ПК в строку */
+            gap: 10px; 
+            margin-bottom: 20px; 
+        }
+
+        /* Адаптация под мобильные устройства (экран уже 480px) */
+        @media (max-width: 480px) {
+            .input-group { flex-direction: column; }
+            button { padding: 15px; } /* Увеличенная область нажатия для пальца */
+        }
+
+        input { 
+            flex-grow: 1; 
+            padding: 12px; 
+            border-radius: 10px; 
+            border: none; 
+            background: #1a1a27; 
+            color: white; 
+            font-size: 16px; /* Предотвращает зум на iOS при нажатии */
+        }
+        button { 
+            background: #ffcc00; 
+            color: #000; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .track-item { 
+            background: #1a1a27; 
+            padding: 10px; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .del-btn { background: #ff4757; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         iframe { width: 100%; height: 80px; border-radius: 8px; }
     </style>
 </head>
@@ -43,8 +93,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const tracksRef = ref(db, 'tracks');
-
-    // Твой секретный пароль (замени на свой)
     const ADMIN_PASS = "12345"; 
 
     window.addTrack = function() {
@@ -58,11 +106,9 @@
 
         const newTrackId = match[2];
 
-        // Проверка на дубликат
         onValue(tracksRef, (snapshot) => {
             const data = snapshot.val();
             let exists = false;
-            
             if (data) {
                 Object.values(data).forEach(track => {
                     if (track.trackId === newTrackId) exists = true;
@@ -70,7 +116,7 @@
             }
 
             if (exists) {
-                alert('ТРЕК УЖЕ ДОБАВЛЕН ДРУГИМ ЧЕЛОВЕКОМ А ТЫ ЛОШАРА НЕ УСПЕЛ');
+                alert('ТРЕК УЖЕ ДОБАВЛЕН!');
             } else {
                 push(tracksRef, { albumId: match[1], trackId: match[2] });
                 input.value = '';
