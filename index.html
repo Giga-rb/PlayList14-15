@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ФУХХ Я УСТАЛ ЭТО ДЕЛАТЬ (ЕСЛИ ЗАМЕТИЛ ТЫ КТО ТАКОЙ ПРИЗНАЙСЯ)</title>
+    <title>ВУАААА МУЗЫКА</title>
     <style>
         body { 
             font-family: sans-serif; 
-            background: #0e0e15; 
+            background: linear-gradient(135deg, #0e0e15, #1c1c2e, #0e0e15); 
+            background-attachment: fixed;
             color: #fff; 
             display: flex; 
             justify-content: center; 
@@ -18,84 +19,57 @@
         .container { 
             width: 100%; 
             max-width: 600px; 
+            background: rgba(26, 26, 39, 0.9); 
+            padding: 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         h2 { text-align: center; color: #ffcc00; margin-bottom: 20px; }
         
-        .input-group { 
-            display: flex; 
-            flex-direction: row; 
-            gap: 10px; 
-            margin-bottom: 20px; 
-        }
+        .description { text-align: center; margin-bottom: 20px; font-size: 1.1em; }
+        .description a { color: #ffcc00; cursor: pointer; text-decoration: underline; }
 
-        @media (max-width: 480px) {
-            .input-group { flex-direction: column; }
-            button { padding: 15px; }
-        }
+        /* Обновили стили для сетки с двумя полями */
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
-        input { 
-            flex-grow: 1; 
-            padding: 12px; 
-            border-radius: 10px; 
-            border: none; 
-            background: #1a1a27; 
-            color: white; 
-            font-size: 16px; 
-        }
-        button { 
-            background: #ffcc00; 
-            color: #000; 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            cursor: pointer; 
-        }
-        .track-item { 
-            background: #1a1a27; 
-            padding: 10px; 
-            border-radius: 12px; 
-            margin-bottom: 10px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        }
-        .del-btn { background: #ff4757; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; max-width: 150px;}
-        iframe { width: 100%; height: 80px; border-radius: 8px; border: none; }
+        input { padding: 12px; border-radius: 10px; border: none; background: #1a1a27; color: white; }
+        button { background: #ffcc00; color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+        .track-item { background: #1a1a27; padding: 10px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; }
+        .del-btn { background: #ff4757; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         
-        /* Стили для красивого блока ВК */
-        .vk-player {
-            width: 100%;
-            height: 80px;
-            background: #2787F5;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            box-sizing: border-box;
-        }
-        .vk-player span { font-weight: bold; font-size: 15px; }
-        .vk-player a {
-            background: white;
-            color: #2787F5;
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #1a1a27; padding: 20px; border-radius: 15px; text-align: center; width: 90%; max-width: 300px; }
+        .vk-link-card { display: block; margin: 10px 0; padding: 15px; background: #2787F5; border-radius: 10px; color: white; text-decoration: none; font-weight: bold; }
+        .close-btn { margin-top: 15px; background: #ff4757; border: none; padding: 10px; color: white; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2> ВУАААА ЭТО ЖЕ ПЛЕЙЛИСТ</h2>
+    <h2>ВУАААА ЭТО ЖЕ ПЛЕЙЛИСТ</h2>
+    
+    <div class="description">
+        Добро пожаловать в наш уголок МУЗЫКИ! <br>
+        <a onclick="document.getElementById('vkModal').style.display='flex'">Вот ссылка на наших молодожёнов</a>
+    </div>
+
     <div class="input-group">
-        <input type="text" id="urlInput" placeholder="Ссылка на Яндекс Музыку или ВК ну лучше яндекс бро:)">
-        <button onclick="addTrack()">ТУДА ЕГО</button>
+        <input type="text" id="urlInput" placeholder="Ссылка на трек (Яндекс или ВК)">
+        <input type="text" id="nameInput" placeholder="Название трека (обязательно для ВК)">
+        <button onclick="addTrack()">ДОБАВИТЬ</button>
     </div>
     <div id="playlist"></div>
+</div>
+
+<div id="vkModal" class="modal">
+    <div class="modal-content">
+        <h3>Наши молодожёны:</h3>
+        <a href="https://vk.com/nstganblack" target="_blank" class="vk-link-card">Коля</a>
+        <a href="https://vk.com/id200144165" target="_blank" class="vk-link-card">Настя</a>
+        <button class="close-btn" onclick="document.getElementById('vkModal').style.display='none'">ЗАКРЫТЬ</button>
+    </div>
 </div>
 
 <script type="module">
@@ -120,29 +94,24 @@
 
     window.addTrack = async function() {
         const inputUrl = document.getElementById('urlInput').value.trim();
+        const inputName = document.getElementById('nameInput').value.trim();
         if (!inputUrl) return;
 
         let trackData = null;
-
-        // Ищем Яндекс или ВК
         const yaMatch = inputUrl.match(/album\/(\d+)\/track\/(\d+)/);
-        // Вытаскиваем уникальный ID трека из ссылки ВК (например, audio-2001400501_119400501)
         const vkMatch = inputUrl.match(/vk\.com\/audio(-?\d+_\d+)/);
 
         if (yaMatch) {
-            trackData = {
-                type: 'yandex',
-                albumId: yaMatch[1],
-                trackId: yaMatch[2]
-            };
+            trackData = { type: 'yandex', albumId: yaMatch[1], trackId: yaMatch[2] };
         } else if (vkMatch) {
-            trackData = {
-                type: 'vk',
-                url: inputUrl,
-                vkId: vkMatch[1] // Уникальный ID для защиты от дубликатов
-            };
+            // Проверка на название для ВК
+            if (!inputName) {
+                alert('Для треков из ВК обязательно нужно ввести название!');
+                return;
+            }
+            trackData = { type: 'vk', url: inputUrl, vkId: vkMatch[1], name: inputName };
         } else {
-            alert('Неверный формат! Скинь ссылку на трек из Яндекс.Музыки или прямую ссылку из ВКонтакте.');
+            alert('Неверный формат ссылки!');
             return;
         }
 
@@ -150,32 +119,30 @@
         const data = snapshot.val();
         let exists = false;
         
-        // Сверяем на дубликаты
         if (data) {
             Object.values(data).forEach(track => {
-                if (trackData.type === 'yandex' && track.type === 'yandex' && track.trackId === trackData.trackId) {
-                    exists = true;
-                }
-                if (trackData.type === 'vk' && track.type === 'vk' && track.vkId === trackData.vkId) {
+                if ((track.type === 'yandex' && track.trackId === trackData.trackId) || 
+                    (track.type === 'vk' && track.vkId === trackData.vkId)) {
                     exists = true;
                 }
             });
         }
 
         if (exists) {
-            alert('ТРЕК УЖЕ ДОБАВЛЕН ЛОШАРА! С УВАЖЕНИЕМ ГОВОРИТ ЭТО GIGA ЛИБО ПРОСТО GIGABYTE ETHERNET :)');
+            alert('ТРЕК УЖЕ ДОБАВЛЕН!');
         } else {
             push(tracksRef, trackData);
             document.getElementById('urlInput').value = '';
+            document.getElementById('nameInput').value = ''; // Очистка полей
         }
     };
 
     window.removeTrack = function(key) {
-        const pass = prompt("Введите пароль если ты админ:) :");
+        const pass = prompt("Введите пароль:");
         if (pass === ADMIN_PASS) {
             remove(ref(db, 'tracks/' + key));
         } else {
-            alert("Неверный пароль даун!");
+            alert("Неверный пароль!");
         }
     };
 
@@ -196,24 +163,19 @@
                 div.className = 'track-item';
                 
                 let playerHtml = '';
-                
                 if (track.type === 'vk') {
-                    // Выводим нашу красивую заглушку для ВК
+                    // Теперь тут выводится имя
                     playerHtml = `
-                        <div class="vk-player">
-                            <span>Трек из ВКонтакте</span>
-                            <a href="${track.url}" target="_blank">Слушать</a>
+                        <div style="width: 100%; text-align: center; padding: 10px; background: #2787F5; border-radius: 8px;">
+                            <span style="font-weight: bold; font-size: 1.1em;">${track.name}</span><br>
+                            <a href="${track.url}" target="_blank" style="color: white; text-decoration: underline; display: block; margin-top: 5px;">Слушать в ВК</a>
                         </div>
                     `;
                 } else {
-                    // Яндекс выводится как и раньше
-                    playerHtml = `<iframe src="https://music.yandex.ru/iframe/#track/${track.trackId}/${track.albumId}" frameborder="0"></iframe>`;
+                    playerHtml = `<iframe src="https://music.yandex.ru/iframe/#track/${track.trackId}/${track.albumId}" style="width: 100%; height: 80px; border: none; border-radius: 8px;"></iframe>`;
                 }
 
-                div.innerHTML = `
-                    ${playerHtml}
-                    <button class="del-btn" onclick="removeTrack('${key}')">Удалить</button>
-                `;
+                div.innerHTML = `${playerHtml}<button class="del-btn" onclick="removeTrack('${key}')">Удалить</button>`;
                 playlist.appendChild(div);
                 renderedTracks[key] = div;
             }
