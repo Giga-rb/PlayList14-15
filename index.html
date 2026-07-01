@@ -176,7 +176,7 @@
                         </div>
                     `;
                 } else {
-                    playerHtml = `<iframe src="https://music.yandex.ru/iframe/#track/${track.trackId}/${track.albumId}" style="width: 100%; height: 80px; border: none; border-radius: 8px;"></iframe>`;
+                    playerHtml = `<iframe src="https://music.yandex.ru/iframe/#track/${track.trackId}/${track.albumId}" loading="lazy" style="width: 100%; height: 80px; border: none; border-radius: 8px;"></iframe>`;
                 }
 
                 div.innerHTML = `${playerHtml}<button class="del-btn" onclick="removeTrack('${key}')">Удалить</button>`;
