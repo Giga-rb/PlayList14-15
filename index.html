@@ -60,8 +60,31 @@
             flex-direction: column; 
             align-items: center; 
         }
-        .del-btn { background: #ff4757; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        iframe { width: 100%; height: 80px; border-radius: 8px; }
+        .del-btn { background: #ff4757; color: white; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; max-width: 150px;}
+        iframe { width: 100%; height: 80px; border-radius: 8px; border: none; }
+        
+        /* Стили для красивого блока ВК */
+        .vk-player {
+            width: 100%;
+            height: 80px;
+            background: #2787F5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+        .vk-player span { font-weight: bold; font-size: 15px; }
+        .vk-player a {
+            background: white;
+            color: #2787F5;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -69,7 +92,7 @@
 <div class="container">
     <h2>🎵 Общий Плейлист</h2>
     <div class="input-group">
-        <input type="text" id="urlInput" placeholder="Ссылка на трек...">
+        <input type="text" id="urlInput" placeholder="Ссылка на Яндекс.Музыку или ВК...">
         <button onclick="addTrack()">Добавить</button>
     </div>
     <div id="playlist"></div>
@@ -93,33 +116,57 @@
     const db = getDatabase(app);
     const tracksRef = ref(db, 'tracks');
     const ADMIN_PASS = "Giga"; 
-    const renderedTracks = {}; // Сюда сохраняем уже созданные элементы
+    const renderedTracks = {}; 
 
     window.addTrack = async function() {
-        const input = document.getElementById('urlInput');
-        const match = input.value.match(/album\/(\d+)\/track\/(\d+)/);
-        
-        if (!match) {
-            alert('Неверная ссылка');
+        const inputUrl = document.getElementById('urlInput').value.trim();
+        if (!inputUrl) return;
+
+        let trackData = null;
+
+        // Ищем Яндекс или ВК
+        const yaMatch = inputUrl.match(/album\/(\d+)\/track\/(\d+)/);
+        // Вытаскиваем уникальный ID трека из ссылки ВК (например, audio-2001400501_119400501)
+        const vkMatch = inputUrl.match(/vk\.com\/audio(-?\d+_\d+)/);
+
+        if (yaMatch) {
+            trackData = {
+                type: 'yandex',
+                albumId: yaMatch[1],
+                trackId: yaMatch[2]
+            };
+        } else if (vkMatch) {
+            trackData = {
+                type: 'vk',
+                url: inputUrl,
+                vkId: vkMatch[1] // Уникальный ID для защиты от дубликатов
+            };
+        } else {
+            alert('Неверный формат! Скинь ссылку на трек из Яндекс.Музыки или прямую ссылку из ВКонтакте.');
             return;
         }
 
-        const newTrackId = match[2];
         const snapshot = await get(tracksRef);
         const data = snapshot.val();
         let exists = false;
         
+        // Сверяем на дубликаты
         if (data) {
             Object.values(data).forEach(track => {
-                if (track.trackId === newTrackId) exists = true;
+                if (trackData.type === 'yandex' && track.type === 'yandex' && track.trackId === trackData.trackId) {
+                    exists = true;
+                }
+                if (trackData.type === 'vk' && track.type === 'vk' && track.vkId === trackData.vkId) {
+                    exists = true;
+                }
             });
         }
 
         if (exists) {
             alert('ТРЕК УЖЕ ДОБАВЛЕН! С УВАЖЕНИЕМ ГОВОРИТ ЭТО GIGA ЛИБО ПРОСТО GIGABYTE ETHERNET');
         } else {
-            push(tracksRef, { albumId: match[1], trackId: match[2] });
-            input.value = '';
+            push(tracksRef, trackData);
+            document.getElementById('urlInput').value = '';
         }
     };
 
@@ -136,7 +183,6 @@
         const data = snapshot.val() || {};
         const playlist = document.getElementById('playlist');
 
-        // Удаляем из DOM то, что удалили в Firebase
         Object.keys(renderedTracks).forEach(key => {
             if (!data[key]) {
                 renderedTracks[key].remove();
@@ -144,13 +190,28 @@
             }
         });
 
-        // Добавляем только то, чего еще нет в DOM
         Object.entries(data).forEach(([key, track]) => {
             if (!renderedTracks[key]) {
                 const div = document.createElement('div');
                 div.className = 'track-item';
+                
+                let playerHtml = '';
+                
+                if (track.type === 'vk') {
+                    // Выводим нашу красивую заглушку для ВК
+                    playerHtml = `
+                        <div class="vk-player">
+                            <span>🎵 Трек из ВКонтакте</span>
+                            <a href="${track.url}" target="_blank">Слушать</a>
+                        </div>
+                    `;
+                } else {
+                    // Яндекс выводится как и раньше
+                    playerHtml = `<iframe src="https://music.yandex.ru/iframe/#track/${track.trackId}/${track.albumId}" frameborder="0"></iframe>`;
+                }
+
                 div.innerHTML = `
-                    <iframe src="https://music.yandex.ru/iframe/#track/${track.trackId}/${track.albumId}" frameborder="0"></iframe>
+                    ${playerHtml}
                     <button class="del-btn" onclick="removeTrack('${key}')">Удалить</button>
                 `;
                 playlist.appendChild(div);
