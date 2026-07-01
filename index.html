@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ВУАААА МУЗЫКА</title>
+    <title>ВУАААА МУЗЫКА. P.S я устал :( ну мне понравился опыт на java script спасибо Насте :) </title>
     <style>
         body { 
             font-family: sans-serif; 
@@ -30,7 +30,6 @@
         .description { text-align: center; margin-bottom: 20px; font-size: 1.1em; }
         .description a { color: #ffcc00; cursor: pointer; text-decoration: underline; }
 
-        /* Обновили стили для сетки с двумя полями */
         .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
         input { padding: 12px; border-radius: 10px; border: none; background: #1a1a27; color: white; }
@@ -48,10 +47,10 @@
 <body>
 
 <div class="container">
-    <h2>ВУАААА ЭТО ЖЕ ПЛЕЙЛИСТ</h2>
+    <h2>ВУАААА!!!! ЭТО ЖЕ ПЛЕЙЛИСТ</h2>
     
     <div class="description">
-        Добро пожаловать в наш уголок МУЗЫКИ! <br>
+        Добро пожаловать в наш уголок МУЗЫКИ! Тут вы найдете музыку которая будет на свадьбе ну и можете добавить свою хах (˶&gt;⩊&lt;˶). <br>
         <a onclick="document.getElementById('vkModal').style.display='flex'">Вот ссылка на наших молодожёнов</a>
     </div>
 
@@ -60,7 +59,13 @@
         <input type="text" id="nameInput" placeholder="Название трека (обязательно для ВК)">
         <button onclick="addTrack()">ДОБАВИТЬ</button>
     </div>
+    
     <div id="playlist"></div>
+
+    <!-- Твой футер с рофлом -->
+    <div style="text-align: center; margin-top: 40px; font-size: 0.9em; color: #888; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+        <p>Вы чё думали сайт бесплатный? Нет, скидывайте деньги на карту 666666666666. Чисто для рофла хах</p>
+    </div>
 </div>
 
 <div id="vkModal" class="modal">
@@ -104,7 +109,6 @@
         if (yaMatch) {
             trackData = { type: 'yandex', albumId: yaMatch[1], trackId: yaMatch[2] };
         } else if (vkMatch) {
-            // Проверка на название для ВК
             if (!inputName) {
                 alert('Для треков из ВК обязательно нужно ввести название!');
                 return;
@@ -133,7 +137,7 @@
         } else {
             push(tracksRef, trackData);
             document.getElementById('urlInput').value = '';
-            document.getElementById('nameInput').value = ''; // Очистка полей
+            document.getElementById('nameInput').value = ''; 
         }
     };
 
@@ -164,7 +168,6 @@
                 
                 let playerHtml = '';
                 if (track.type === 'vk') {
-                    // Теперь тут выводится имя
                     playerHtml = `
                         <div style="width: 100%; text-align: center; padding: 10px; background: #2787F5; border-radius: 8px;">
                             <span style="font-weight: bold; font-size: 1.1em;">${track.name}</span><br>
