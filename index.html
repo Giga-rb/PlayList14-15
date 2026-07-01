@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Общий Свадебный Плейлист</title>
+    <title>ФУХХ Я УСТАЛ ЭТО ДЕЛАТЬ (ЕСЛИ ЗАМЕТИЛ ТЫ КТО ТАКОЙ ПРИЗНАЙСЯ)</title>
     <style>
         body { 
             font-family: sans-serif; 
@@ -90,10 +90,10 @@
 <body>
 
 <div class="container">
-    <h2>🎵 Общий Плейлист</h2>
+    <h2> ВУАААА ЭТО ЖЕ ПЛЕЙЛИСТ</h2>
     <div class="input-group">
-        <input type="text" id="urlInput" placeholder="Ссылка на Яндекс.Музыку или ВК...">
-        <button onclick="addTrack()">Добавить</button>
+        <input type="text" id="urlInput" placeholder="Ссылка на Яндекс Музыку или ВК ну лучше яндекс бро:)">
+        <button onclick="addTrack()">ТУДА ЕГО</button>
     </div>
     <div id="playlist"></div>
 </div>
@@ -163,7 +163,7 @@
         }
 
         if (exists) {
-            alert('ТРЕК УЖЕ ДОБАВЛЕН! С УВАЖЕНИЕМ ГОВОРИТ ЭТО GIGA ЛИБО ПРОСТО GIGABYTE ETHERNET');
+            alert('ТРЕК УЖЕ ДОБАВЛЕН ЛОШАРА! С УВАЖЕНИЕМ ГОВОРИТ ЭТО GIGA ЛИБО ПРОСТО GIGABYTE ETHERNET :)');
         } else {
             push(tracksRef, trackData);
             document.getElementById('urlInput').value = '';
@@ -171,11 +171,11 @@
     };
 
     window.removeTrack = function(key) {
-        const pass = prompt("Введите пароль администратора:");
+        const pass = prompt("Введите пароль если ты админ:) :");
         if (pass === ADMIN_PASS) {
             remove(ref(db, 'tracks/' + key));
         } else {
-            alert("Неверный пароль!");
+            alert("Неверный пароль даун!");
         }
     };
 
@@ -201,7 +201,7 @@
                     // Выводим нашу красивую заглушку для ВК
                     playerHtml = `
                         <div class="vk-player">
-                            <span>🎵 Трек из ВКонтакте</span>
+                            <span>Трек из ВКонтакте</span>
                             <a href="${track.url}" target="_blank">Слушать</a>
                         </div>
                     `;
